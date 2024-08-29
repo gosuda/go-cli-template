@@ -13,16 +13,15 @@ import (
 func main() {
 	err := godotenv.Load(".env")
 	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+		fmt.Println("env not exist, use args", err)
 	}
 
 	app := &cli.App{
 		Name:  "Input your cli App Name",
 		Usage: "Input your cli App Usage",
 		Flags: flags(),
-		Action: func(c *cli.Context) error {
-			return Run()
+		Action: func(ctx *cli.Context) error {
+			return Run(ctx)
 		},
 	}
 
@@ -31,8 +30,12 @@ func main() {
 	}
 }
 
-func Run() error {
+func Run(ctx *cli.Context) error {
 	logger := zerolog.New(os.Stdout).With().Timestamp().Logger()
+
+	// handle args
+	mode := ctx.String("mode")
+	logger.Info().Msgf("Running in %s mode", mode)
 
 	// make your app here
 	app := app.NewApp(logger, mode)

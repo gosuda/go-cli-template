@@ -1,10 +1,11 @@
-.PHONY=all build run
+.PHONY: build run stop
 
-all:
-	make build && make run
 
 build:
-	go build  ./cmd/
+	go build -o build/app ./cmd/
 
 run:
-	nohup cmd > output.log 2>&1 &
+	nohup build/app > build/output.log 2>&1 & echo $$! > build/pid
+
+stop:
+	-kill `cat build/pid` && rm -f build/pid
